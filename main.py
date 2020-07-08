@@ -1,5 +1,5 @@
 from winreg import *
-import dpkt, pcap
+import dpkt, pcap, protocol
 
 devs = pcap.findalldevs()
 net = "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\NetworkCards"
@@ -37,5 +37,4 @@ index = int(input("네트워크 인터페이스를 고르시오 : "))
 pc = pcap.pcap(name=devs[index])
 
 for t, p in pc:
-    print("\n")
-    print(p)
+    protocol.ether(p)
