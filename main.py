@@ -32,7 +32,7 @@ for i in range(len(devs)):
             print(str(i) + " : " + str(devs[i]) + '  (' + str(lst[j+1]) + ')')
     
 
-index = int(input("네트워크 인터페이스를 고르시오 : "))
+index = int(input("네트워크 인터페이스를 고르시오: "))
 
 pc = pcap.pcap(name=devs[index])
 
