@@ -43,7 +43,7 @@ def IPv4(ip):
 	print('Header Checksum:', hex(ip.sum))
 	print('Source IP Address:', inet_to_str(ip.src))
 	print('Destination IP Address:', inet_to_str(ip.dst))
-	if ip.opts == "":
+	if ip.opts != "":
 		print('Options:', ip.opts)
 	print("\n")
 
