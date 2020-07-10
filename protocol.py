@@ -1,5 +1,8 @@
 import dpkt, pcap
 import socket
+icmp_type = {0:'Echo Reply', 3:'Destination Network Unreachable', 5:'Redirect', 8:'Echo Request',11:'TTL expired in trans'}
+protocols = {1:'ICMP',6:'TCP',7:'ECHO',17:'UDP',20:'FTP',21:'FTP',22:'SSH',23:'Telnet',25:'SMTP',53:'DNS',67:'DHCP',68:'DHCP',69:'TFTP',80:'HTTP',110:'POP3',143:'IMAP4',161:'SNMP',443:'HTTPS',520:'RIP'}
+
 
 def mac_addr(address):
 	return ':'.join('%02x' % dpkt.compat.compat_ord(b) for b in address) #%02x : 앞의 빈자리를 0으로 채우기
@@ -40,6 +43,8 @@ def IPv4(ip):
 	print('Fragment Offest:', ip.offset)
 	print('Time to Live:', ip.ttl)
 	print('Protocol:', ip.p)
+	ip_protocol = ip.p
+ 	print('Protocol:', ip_protocol, '(', protocols[ip_protocol], ')')
 	print('Header Checksum:', hex(ip.sum))
 	print('Source IP Address:', inet_to_str(ip.src))
 	print('Destination IP Address:', inet_to_str(ip.dst))
@@ -89,3 +94,24 @@ def UDP(udp):
 	print('Length :', udp.ulen)
 	print('Chceksum :', udp.sum)
 	print('\n')
+
+def ICMP(icmp):
+	print('<ICMP Frame>')
+	print('Type : ' + str(icmp.type) + '(' + icmp_type[icmp.type] + ')')
+	print('Code : ' + str(icmp.code))
+	print('Checksum : ' + str(hex(icmp.sum)))
+	icmpdata = ICMP_Data(repr(icmp.data))
+
+def ICMP_Data(icmpdata):
+	icmpdatalst = re.split("[\'(, ]", icmpdata)
+	if (icmpdatalst[0] == 'Echo'):
+		print('Identifier : ' + icmpdatalst[1][3:])
+		print('Sequence Number : ' + icmpdatalst[3][4:])
+		print('Data : ' + icmpdatalst[6])
+		print('Data length : ' + str(len(icmpdatalst[6])))
+		print()
+		print()
+	else:
+		print(icmpdatalst)
+		print()
+		print()
