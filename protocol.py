@@ -26,7 +26,7 @@ def ether(p):
 			ARP(eth.data)
 		else:
 			print("지원하지 않는 프로토콜입니다.")
-	except:	 
+	except:
 		pass
 
 def IPv4(ip):
@@ -43,10 +43,13 @@ def IPv4(ip):
 	print('Header Checksum:', hex(ip.sum))
 	print('Source IP Address:', inet_to_str(ip.src))
 	print('Destination IP Address:', inet_to_str(ip.dst))
-	if ip.opts != "":
+	if ip.opts == "":
 		print('Options:', ip.opts)
 	print("\n")
-
+	if(ip.p == 6):
+		TCP(ip.data)
+	elif(ip.p == 17):
+		UDP(ip.data)
 
 def IPv6(ip):
 	print('<IPv6 Frame>')
@@ -59,6 +62,10 @@ def IPv6(ip):
 	print('Source IP Address:', inet_to_str(ip.src))
 	print('Destination IP Address:', inet_to_str(ip.dst))
 	print("\n")
+	if(nxt == 6):
+		TCP(ip.data)
+	elif(nxt == 17):
+		UDP(ip.data)
 
 
 op_list = ["tmp", "request", "reply"]
@@ -74,3 +81,11 @@ def ARP(arp):
 	print('Target MAC Address:', mac_addr(arp.tha))
 	print('Target IP Address:', inet_to_str(arp.tpa))
 	print("\n")
+
+def UDP(udp):
+	print("<UDP Frame>")
+	print('Source port :', udp.sport)
+	print('Destion port :', udp.dport)
+	print('Length :', udp.ulen)
+	print('Chceksum :', udp.sum)
+	print('\n')
