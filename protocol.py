@@ -36,14 +36,14 @@ def IPv4(ip):
 	print('Type of Service:', ip.tos)
 	print('Total Length:', ip.len)
 	print('Identification:', hex(ip.id), '(', ip.id, ')')
-	print('Flags:', ip.rf, ip.df, ip.mf) #와이어샤크에서는 꺽쇠로 모여있음
+	print('Flags:', ip.rf, ip.df, ip.mf)
 	print('Fragment Offest:', ip.offset)
 	print('Time to Live:', ip.ttl)
 	print('Protocol:', ip.p)
 	print('Header Checksum:', hex(ip.sum))
 	print('Source IP Address:', inet_to_str(ip.src))
 	print('Destination IP Address:', inet_to_str(ip.dst))
-	if ip.opts == "":
+	if ip.opts != "":
 		print('Options:', ip.opts)
 	print("\n")
 	if(ip.p == 6):
