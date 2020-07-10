@@ -42,7 +42,6 @@ def IPv4(ip):
 	print('Flags:', ip.rf, ip.df, ip.mf)
 	print('Fragment Offest:', ip.offset)
 	print('Time to Live:', ip.ttl)
-	print('Protocol:', ip.p)
 	ip_protocol = ip.p
  	print('Protocol:', ip_protocol, '(', protocols[ip_protocol], ')')
 	print('Header Checksum:', hex(ip.sum))
