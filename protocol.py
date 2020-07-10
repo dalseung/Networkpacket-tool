@@ -1,4 +1,4 @@
-import dpkt, pcap
+import dpkt, pcap, re
 import socket
 icmp_type = {0:'Echo Reply', 3:'Destination Network Unreachable', 5:'Redirect', 8:'Echo Request',11:'TTL expired in trans'}
 protocols = {1:'ICMP',6:'TCP',7:'ECHO',17:'UDP',20:'FTP',21:'FTP',22:'SSH',23:'Telnet',25:'SMTP',53:'DNS',67:'DHCP',68:'DHCP',69:'TFTP',80:'HTTP',110:'POP3',143:'IMAP4',161:'SNMP',443:'HTTPS',520:'RIP'}
