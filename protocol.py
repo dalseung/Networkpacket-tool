@@ -50,10 +50,12 @@ def IPv4(ip):
 	if ip.opts != "":
 		print('Options:', ip.opts)
 	print("\n")
-	if(ip.p == 6):
+	if(ip_protocol == 6):
 		TCP(ip.data)
-	elif(ip.p == 17):
+	elif(ip_protocol == 17):
 		UDP(ip.data)
+	elif(ip_protocol == 1):
+		ICMP(ip.data)
 
 def IPv6(ip):
 	print('<IPv6 Frame>')
