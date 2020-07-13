@@ -1,18 +1,15 @@
 import dpkt, pcap
+import dpkt, pcap, re
 import socket
 icmp_type = {0:'Echo Reply', 3:'Destination Network Unreachable', 5:'Redirect', 8:'Echo Request',11:'TTL expired in trans'}
 protocols = {1:'ICMP',6:'TCP',7:'ECHO',17:'UDP',20:'FTP',21:'FTP',22:'SSH',23:'Telnet',25:'SMTP',53:'DNS',67:'DHCP',68:'DHCP',69:'TFTP',80:'HTTP',110:'POP3',143:'IMAP4',161:'SNMP',443:'HTTPS',520:'RIP'}
-
-
 def mac_addr(address):
 	return ':'.join('%02x' % dpkt.compat.compat_ord(b) for b in address) #%02x : 앞의 빈자리를 0으로 채우기
-
 def inet_to_str(inet):
 	try:
 		return socket.inet_ntop(socket.AF_INET, inet)
 	except ValueError:
 		return socket.inet_ntop(socket.AF_INET6, inet)
-
 def ether(p):
 	eth = dpkt.ethernet.Ethernet(p)
 	print('<Ethernet Frame>')
@@ -31,7 +28,6 @@ def ether(p):
 			print("지원하지 않는 프로토콜입니다.")
 	except:
 		pass
-
 def IPv4(ip):
 	print('<IPv4 Frame>')
 	print('Version:', ip.v)
@@ -43,7 +39,7 @@ def IPv4(ip):
 	print('Fragment Offest:', ip.offset)
 	print('Time to Live:', ip.ttl)
 	ip_protocol = ip.p
- 	print('Protocol:', ip_protocol, '(', protocols[ip_protocol], ')')
+	print('Protocol:', ip_protocol, '(', protocols[ip_protocol], ')')
 	print('Header Checksum:', hex(ip.sum))
 	print('Source IP Address:', inet_to_str(ip.src))
 	print('Destination IP Address:', inet_to_str(ip.dst))
@@ -54,7 +50,6 @@ def IPv4(ip):
 		TCP(ip.data)
 	elif(ip.p == 17):
 		UDP(ip.data)
-
 def IPv6(ip):
 	print('<IPv6 Frame>')
 	print('Version:', ip.v)
@@ -70,8 +65,6 @@ def IPv6(ip):
 		TCP(ip.data)
 	elif(nxt == 17):
 		UDP(ip.data)
-
-
 op_list = ["tmp", "request", "reply"]
 def ARP(arp):
 	print('<ARP Frame>')
@@ -85,13 +78,28 @@ def ARP(arp):
 	print('Target MAC Address:', mac_addr(arp.tha))
 	print('Target IP Address:', inet_to_str(arp.tpa))
 	print("\n")
-
 def UDP(udp):
 	print("<UDP Frame>")
 	print('Source port :', udp.sport)
-	print('Destion port :', udp.dport)
+	print('Destination port :', udp.dport)
 	print('Length :', udp.ulen)
 	print('Chceksum :', udp.sum)
+	print('\n')
+
+def TCP(tcp):
+	print("<TCP Frame>")
+	print('Source port : ', tcp.sport)
+	print('Destination : ', tcp.dport)
+	print('Sequence Number :', tcp.seq)
+	print('Acknowledgment Number',tcp.ack)
+	print('Offset',tcp.off)
+	print('Reserved')
+	print('Flags',tcp.flags)
+	print('Window size',tcp.win)
+	print('Checksum',tcp.sum)
+	print('Urgent pointer', tcp.urp)
+	print('Option and Padding', tcp.opts)
+	print('Reserved')
 	print('\n')
 
 def ICMP(icmp):
@@ -100,7 +108,6 @@ def ICMP(icmp):
 	print('Code : ' + str(icmp.code))
 	print('Checksum : ' + str(hex(icmp.sum)))
 	icmpdata = ICMP_Data(repr(icmp.data))
-
 def ICMP_Data(icmpdata):
 	icmpdatalst = re.split("[\'(, ]", icmpdata)
 	if (icmpdatalst[0] == 'Echo'):
