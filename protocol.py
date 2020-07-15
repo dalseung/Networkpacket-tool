@@ -113,12 +113,10 @@ def TCP(tcp):
 	print('Checksum:', tcp.sum)
 	print('Urgent pointer:', tcp.urp)
 	print('Option and Padding:', tcp.opts)
-	print('Reserved')
 	print('\n')
-	if(tcp.sport == 80 or tcp.dport == 80):
-		HTTP(tcp.data)
-	elif(tcp.sport == 443):
-		HTTPS(tcp.data)
+	if(tcp.dport == 80):
+		request=dpkt.http.Request(tcp.data)
+		HTTP_request(request)
 
 
 def ICMP(icmp):
@@ -144,16 +142,6 @@ def ICMP_Data(icmpdata):
 		print()
 
 
-def http(http):
-	print("a")
-	regex = r"(\w+)\s+(.*?)\s+(.*)"
-	matches = re.search(regex, http, re.MULTILINE)
-	print("b")
-	if matches:
-		print ("Match was found at {start}-{end}: {match}".format(start = matches.start(), end = matches.end(), match = matches.group()))
-		print("c")
-		for groupNum in range(0, len(matches.groups())):
-			groupNum = groupNum + 1
-			
-			print ("Group {groupNum} found at {start}-{end}: {group}".format(groupNum = groupNum, start = matches.start(groupNum), end = matches.end(groupNum), group = matches.group(groupNum)))
-		print("d")
+def HTTP_request(http):
+	print('<HTTP Request Frame>')
+	print(http)
