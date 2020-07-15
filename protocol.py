@@ -117,6 +117,9 @@ def TCP(tcp):
 	if(tcp.dport == 80):
 		request=dpkt.http.Request(tcp.data)
 		HTTP_request(request)
+	if(tcp.sport == 80):
+		response=dpkt.http.Response(tcp.data)
+		HTTP_response(response)
 
 
 def ICMP(icmp):
@@ -144,4 +147,8 @@ def ICMP_Data(icmpdata):
 
 def HTTP_request(http):
 	print('<HTTP Request Frame>')
+	print(http)
+
+def HTTP_response(http):
+	print('<HTTP Response Frame>')
 	print(http)
