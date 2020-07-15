@@ -1,15 +1,21 @@
 import dpkt, pcap
-import dpkt, pcap, re
 import socket
+import re
 icmp_type = {0:'Echo Reply', 3:'Destination Network Unreachable', 5:'Redirect', 8:'Echo Request',11:'TTL expired in trans'}
 protocols = {1:'ICMP',6:'TCP',7:'ECHO',17:'UDP',20:'FTP',21:'FTP',22:'SSH',23:'Telnet',25:'SMTP',53:'DNS',67:'DHCP',68:'DHCP',69:'TFTP',80:'HTTP',110:'POP3',143:'IMAP4',161:'SNMP',443:'HTTPS',520:'RIP'}
+
+
 def mac_addr(address):
 	return ':'.join('%02x' % dpkt.compat.compat_ord(b) for b in address) #%02x : 앞의 빈자리를 0으로 채우기
+
+
 def inet_to_str(inet):
 	try:
 		return socket.inet_ntop(socket.AF_INET, inet)
 	except ValueError:
 		return socket.inet_ntop(socket.AF_INET6, inet)
+
+
 def ether(p):
 	eth = dpkt.ethernet.Ethernet(p)
 	print('<Ethernet Frame>')
@@ -26,8 +32,10 @@ def ether(p):
 			ARP(eth.data)
 		else:
 			print("지원하지 않는 프로토콜입니다.")
-	except:
+	except:	 
 		pass
+
+
 def IPv4(ip):
 	print('<IPv4 Frame>')
 	print('Version:', ip.v)
@@ -50,6 +58,8 @@ def IPv4(ip):
 		TCP(ip.data)
 	elif(ip.p == 17):
 		UDP(ip.data)
+
+
 def IPv6(ip):
 	print('<IPv6 Frame>')
 	print('Version:', ip.v)
@@ -65,6 +75,8 @@ def IPv6(ip):
 		TCP(ip.data)
 	elif(nxt == 17):
 		UDP(ip.data)
+
+
 op_list = ["tmp", "request", "reply"]
 def ARP(arp):
 	print('<ARP Frame>')
@@ -78,46 +90,70 @@ def ARP(arp):
 	print('Target MAC Address:', mac_addr(arp.tha))
 	print('Target IP Address:', inet_to_str(arp.tpa))
 	print("\n")
+
+
 def UDP(udp):
 	print("<UDP Frame>")
-	print('Source port :', udp.sport)
-	print('Destination port :', udp.dport)
-	print('Length :', udp.ulen)
-	print('Chceksum :', udp.sum)
+	print('Source port:', udp.sport)
+	print('Destination port:', udp.dport)
+	print('Length:', udp.ulen)
+	print('Chceksum:', udp.sum)
 	print('\n')
+
 
 def TCP(tcp):
 	print("<TCP Frame>")
-	print('Source port : ', tcp.sport)
-	print('Destination : ', tcp.dport)
-	print('Sequence Number :', tcp.seq)
-	print('Acknowledgment Number',tcp.ack)
-	print('Offset',tcp.off)
-	print('Reserved')
-	print('Flags',tcp.flags)
-	print('Window size',tcp.win)
-	print('Checksum',tcp.sum)
-	print('Urgent pointer', tcp.urp)
-	print('Option and Padding', tcp.opts)
+	print('Source port:', tcp.sport)
+	print('Destination port:', tcp.dport)
+	print('Sequence Number:', tcp.seq)
+	print('Acknowledgment Number:', tcp.ack)
+	print('Offset:', tcp.off)
+	print('Flags:', tcp.flags)
+	print('Window size:', tcp.win)
+	print('Checksum:', tcp.sum)
+	print('Urgent pointer:', tcp.urp)
+	print('Option and Padding:', tcp.opts)
 	print('Reserved')
 	print('\n')
+	if(tcp.sport == 80 or tcp.dport == 80):
+		HTTP(tcp.data)
+	elif(tcp.sport == 443):
+		HTTPS(tcp.data)
+
 
 def ICMP(icmp):
 	print('<ICMP Frame>')
-	print('Type : ' + str(icmp.type) + '(' + icmp_type[icmp.type] + ')')
-	print('Code : ' + str(icmp.code))
-	print('Checksum : ' + str(hex(icmp.sum)))
+	print('Type:' + str(icmp.type) + '(' + icmp_type[icmp.type] + ')')
+	print('Code:' + str(icmp.code))
+	print('Checksum:' + str(hex(icmp.sum)))
 	icmpdata = ICMP_Data(repr(icmp.data))
+
+
 def ICMP_Data(icmpdata):
 	icmpdatalst = re.split("[\'(, ]", icmpdata)
 	if (icmpdatalst[0] == 'Echo'):
-		print('Identifier : ' + icmpdatalst[1][3:])
-		print('Sequence Number : ' + icmpdatalst[3][4:])
-		print('Data : ' + icmpdatalst[6])
-		print('Data length : ' + str(len(icmpdatalst[6])))
+		print('Identifier:' + icmpdatalst[1][3:])
+		print('Sequence Number:' + icmpdatalst[3][4:])
+		print('Data:' + icmpdatalst[6])
+		print('Data length:' + str(len(icmpdatalst[6])))
 		print()
 		print()
 	else:
 		print(icmpdatalst)
 		print()
 		print()
+
+
+def http(http):
+	print("a")
+	regex = r"(\w+)\s+(.*?)\s+(.*)"
+	matches = re.search(regex, http, re.MULTILINE)
+	print("b")
+	if matches:
+		print ("Match was found at {start}-{end}: {match}".format(start = matches.start(), end = matches.end(), match = matches.group()))
+		print("c")
+		for groupNum in range(0, len(matches.groups())):
+			groupNum = groupNum + 1
+			
+			print ("Group {groupNum} found at {start}-{end}: {group}".format(groupNum = groupNum, start = matches.start(groupNum), end = matches.end(groupNum), group = matches.group(groupNum)))
+		print("d")
