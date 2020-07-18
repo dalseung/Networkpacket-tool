@@ -37,4 +37,4 @@ index = int(input("네트워크 인터페이스를 고르시오 : "))
 pc = pcap.pcap(name=devs[index])
 
 for t, p in pc:
-    protocol_.ether(p)
+    protocol.ether(p)
