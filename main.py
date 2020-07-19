@@ -1,6 +1,8 @@
 from winreg import *
-import dpkt, pcap, protocol
+import dpkt, pcap, protocol, pcapsave
 
+rawpacket = []
+timestamp = []
 devs = pcap.findalldevs()
 net = "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\NetworkCards"
 reg = ConnectRegistry(None,HKEY_LOCAL_MACHINE)
@@ -36,5 +38,18 @@ index = int(input("네트워크 인터페이스를 고르시오 : "))
 
 pc = pcap.pcap(name=devs[index])
 
-for t, p in pc:
-    protocol.ether(p)
+count = 0
+
+try:
+    for t, p in pc:
+        rawpacket.append(p)
+        protocol.ether(p)
+except:
+    saveq = input('Save Packet? [Y/n] : ')
+    if (saveq == 'Y'):
+        fname = str(input('Input pcap file name : ')) + '.pcap'
+        save = pcapsave.Pcap(fname)
+        for i in rawpacket:
+            save.write(i)
+    else:
+        pass
