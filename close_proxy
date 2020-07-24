@@ -2,4 +2,4 @@ import os
 
 close = os.popen('reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f')
 
-print(close.read())
+print(.read()[:-1], end='')
