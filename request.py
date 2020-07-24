@@ -52,25 +52,32 @@ def conn_string(conn, data, addr):
    else:
       port = int((temp[(port_pos+1):])[:webserver_pos-port_pos-1])
       webserver = temp[:port_pos]
-   #요기서 data 수정 하면 됨
+   print()
+   print("===========Host Request===========")
+   print(data)
+   aorc = input("Accept or Change (a/c) : ")
+   if aorc == "c":
+      data = bytes(input("====change data====\n"))
    proxy_server(webserver, port, conn, addr, data)
 
 
 def proxy_server(host, port, conn, addr, data):
    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
    s.connect((host, port))
-   print(data)
    s.send(data)
 
    while True:
       reply = s.recv(buffer_size)
+      print()
+      print("===========Host Reply===========")
+      print(reply)
       if(len(reply) > 0):
          conn.send(reply)
          dar = float(len(reply))
          dar = float(dar / 1024)
          dar = "%.3s" % (str(dar))
          dar = "%s KB" % (dar)
-         print("[*] Request Done : %s => %s <=" % (str(addr[0]), str(dar)))
+         #print("[*] Request Done : %s => %s <=" % (str(addr[0]), str(dar)))
       else:
          break
 
