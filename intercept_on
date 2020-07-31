@@ -1,0 +1,13 @@
+import os
+
+
+ip= input("ip를 입력하시오: ")
+port= input("port를 입력하시오: ")
+
+data= ip + ":" + port
+
+res1 = os.popen('reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyServer /t REG_SZ /d {} /f'.format(data))
+
+res = os.popen('reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyEnable /t REG_DWORD /d 1 /f')
+
+print(res.read()[:-1], end='')
